@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //Basica variables
 $name="House Points" ;
 $description="Module to allow allocating and display of house points (modified by Sandra https://github.com/SKuipers)" ;
-$entryURL="overall.php" ;
+$entryURL="house_view.php" ;
 $type="Additional" ;
 $category="Learn" ;
 $version="1.3.02" ;
@@ -30,48 +30,55 @@ $url="http://rapid36.com" ;
 //Module tables
 $moduleTables[0] = "
     CREATE TABLE hpCategory (
-    categoryID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    categoryName VARCHAR(45) NOT NULL,
-    categoryOrder TINYINT(4) UNSIGNED NOT NULL,
-    categoryType ENUM('House','Student') NOT NULL DEFAULT 'House',
-    categoryPresets TEXT NOT NULL,
-    PRIMARY KEY (categoryID)
+        categoryID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        categoryName VARCHAR(45) NOT NULL,
+        categoryOrder TINYINT(4) UNSIGNED NOT NULL,
+        categoryType ENUM('House','Student') NOT NULL DEFAULT 'House',
+        PRIMARY KEY (categoryID)
     );";
     
 $moduleTables[1] = "
     CREATE TABLE hpPointStudent (
-    hpID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    studentID int(10) unsigned NOT NULL,
-    categoryID int(10) unsigned NOT NULL,
-    points INT(4) unsigned NOT NULL,
-    reason varchar(255) NOT NULL,
-    yearID int(10) unsigned NOT NULL,
-    awardedDate datetime NOT NULL,
-    awardedBy int(10) unsigned NOT NULL,
-    PRIMARY KEY (hpID)
+        hpID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        studentID int(10) unsigned NOT NULL,
+        categoryID int(10) unsigned NOT NULL,
+        points INT(4) unsigned NOT NULL,
+        reason varchar(255) NOT NULL,
+        yearID int(10) unsigned NOT NULL,
+        awardedDate datetime NOT NULL,
+        awardedBy int(10) unsigned NOT NULL,
+        PRIMARY KEY (hpID)
     );";
    
 $moduleTables[2] = "
     CREATE TABLE hpPointHouse (
-    hpID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    houseID INT(10) UNSIGNED NOT NULL,
-    categoryID INT(10) UNSIGNED NOT NULL,
-    points INT(4) UNSIGNED NOT NULL,
-    reason VARCHAR(255) NULL,
-    yearID INT(10) UNSIGNED NOT NULL,
-    awardedDate DATETIME NOT NULL,
-    awardedBy INT(10) UNSIGNED NOT NULL,
-    PRIMARY KEY (hpID)
+        hpID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        houseID INT(10) UNSIGNED NOT NULL,
+        categoryID INT(10) UNSIGNED NOT NULL,
+        points INT(4) UNSIGNED NOT NULL,
+        reason VARCHAR(255) NULL,
+        yearID INT(10) UNSIGNED NOT NULL,
+        awardedDate DATETIME NOT NULL,
+        awardedBy INT(10) UNSIGNED NOT NULL,
+        PRIMARY KEY (hpID)
     );";
 
+$moduleTables[3] = "
+    CREATE TABLE hpSubCategory (
+        subCategoryID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        categoryID INT NOT NULL,
+        name VARCHAR(500) NOT NULL,
+        value INT NOT NULL,
+        PRIMARY KEY (subCategoryID)
+    );";
 //Action rows
 // for admin and SLT only
 $actionRows[0]["name"]="Categories" ;
 $actionRows[0]["precedence"]="1";
 $actionRows[0]["category"]="Manage" ;
 $actionRows[0]["description"]="Manage category list" ;
-$actionRows[0]["URLList"]="category.php" ;
-$actionRows[0]["entryURL"]="category.php" ;
+$actionRows[0]["URLList"]="category_manage.php" ;
+$actionRows[0]["entryURL"]="category_manage.php" ;
 $actionRows[0]["defaultPermissionAdmin"]="Y" ;
 $actionRows[0]["defaultPermissionTeacher"]="N" ;
 $actionRows[0]["defaultPermissionStudent"]="N" ;
@@ -87,8 +94,8 @@ $actionRows[1]["name"]="Award student points" ;
 $actionRows[1]["precedence"]="1";
 $actionRows[1]["category"]="Award" ;
 $actionRows[1]["description"]="Award points to students" ;
-$actionRows[1]["URLList"]="award.php" ;
-$actionRows[1]["entryURL"]="award.php" ;
+$actionRows[1]["URLList"]="student_award.php" ;
+$actionRows[1]["entryURL"]="student_award.php" ;
 $actionRows[1]["defaultPermissionAdmin"]="Y" ;
 $actionRows[1]["defaultPermissionTeacher"]="Y" ;
 $actionRows[1]["defaultPermissionStudent"]="N" ;
@@ -104,8 +111,8 @@ $actionRows[2]["name"]="Award house points" ;
 $actionRows[2]["precedence"]="1";
 $actionRows[2]["category"]="Award" ;
 $actionRows[2]["description"]="Award points to house" ;
-$actionRows[2]["URLList"]="house.php" ;
-$actionRows[2]["entryURL"]="house.php" ;
+$actionRows[2]["URLList"]="house_award.php" ;
+$actionRows[2]["entryURL"]="house_award.php" ;
 $actionRows[2]["defaultPermissionAdmin"]="Y" ;
 $actionRows[2]["defaultPermissionTeacher"]="Y" ;
 $actionRows[2]["defaultPermissionStudent"]="N" ;
@@ -121,8 +128,8 @@ $actionRows[3]["name"]="View points overall" ;
 $actionRows[3]["precedence"]="4";
 $actionRows[3]["category"]="View" ;
 $actionRows[3]["description"]="View points for each house" ;
-$actionRows[3]["URLList"]="overall.php" ;
-$actionRows[3]["entryURL"]="overall.php" ;
+$actionRows[3]["URLList"]="house_view.php" ;
+$actionRows[3]["entryURL"]="house_view.php" ;
 $actionRows[3]["defaultPermissionAdmin"]="Y" ;
 $actionRows[3]["defaultPermissionTeacher"]="Y" ;
 $actionRows[3]["defaultPermissionStudent"]="Y" ;
@@ -138,8 +145,8 @@ $actionRows[4]["name"]="View points individual" ;
 $actionRows[4]["precedence"]="5";
 $actionRows[4]["category"]="View" ;
 $actionRows[4]["description"]="Select individual student to view house points" ;
-$actionRows[4]["URLList"]="individual.php" ;
-$actionRows[4]["entryURL"]="individual.php" ;
+$actionRows[4]["URLList"]="student_view.php" ;
+$actionRows[4]["entryURL"]="student_view.php" ;
 $actionRows[4]["defaultPermissionAdmin"]="Y" ;
 $actionRows[4]["defaultPermissionTeacher"]="Y" ;
 $actionRows[4]["defaultPermissionStudent"]="N" ;
@@ -155,8 +162,8 @@ $actionRows[5]["name"]="View points class" ;
 $actionRows[5]["precedence"]="6";
 $actionRows[5]["category"]="View" ;
 $actionRows[5]["description"]="View points for whole class" ;
-$actionRows[5]["URLList"]="classpoints.php" ;
-$actionRows[5]["entryURL"]="classpoints.php" ;
+$actionRows[5]["URLList"]="class_view.php" ;
+$actionRows[5]["entryURL"]="class_view.php" ;
 $actionRows[5]["defaultPermissionAdmin"]="Y" ;
 $actionRows[5]["defaultPermissionTeacher"]="Y" ;
 $actionRows[5]["defaultPermissionStudent"]="N" ;
@@ -190,9 +197,9 @@ $actionRows[6]["categoryPermissionOther"]="N" ;
 $actionRows[7]["name"]="Manage points" ;
 $actionRows[7]["precedence"]="8";
 $actionRows[7]["category"]="Manage" ;
-$actionRows[7]["description"]="modify points awarded" ;
-$actionRows[7]["URLList"]="manage.php" ;
-$actionRows[7]["entryURL"]="manage.php" ;
+$actionRows[7]["description"]="modify points awarded";
+$actionRows[7]["URLList"]="points_manage.php" ;
+$actionRows[7]["entryURL"]="points_manage.php" ;
 $actionRows[7]["defaultPermissionAdmin"]="Y" ;
 $actionRows[7]["defaultPermissionTeacher"]="N" ;
 $actionRows[7]["defaultPermissionStudent"]="N" ;
@@ -209,8 +216,8 @@ $actionRows[8]["name"]="Award student points_unlimited" ;
 $actionRows[8]["precedence"]="2";
 $actionRows[8]["category"]="Award" ;
 $actionRows[8]["description"]="Award points to students, without a limit" ;
-$actionRows[8]["URLList"]="award.php" ;
-$actionRows[8]["entryURL"]="award.php" ;
+$actionRows[8]["URLList"]="student_award.php" ;
+$actionRows[8]["entryURL"]="student_award.php" ;
 $actionRows[8]["defaultPermissionAdmin"]="Y" ;
 $actionRows[8]["defaultPermissionTeacher"]="N" ;
 $actionRows[8]["defaultPermissionStudent"]="N" ;
@@ -226,8 +233,8 @@ $actionRows[9]["name"]="Award house points_unlimited" ;
 $actionRows[9]["precedence"]="2";
 $actionRows[9]["category"]="Award" ;
 $actionRows[9]["description"]="Award points to house, without a limit" ;
-$actionRows[9]["URLList"]="house.php" ;
-$actionRows[9]["entryURL"]="house.php" ;
+$actionRows[9]["URLList"]="house_award.php" ;
+$actionRows[9]["entryURL"]="house_award.php" ;
 $actionRows[9]["defaultPermissionAdmin"]="Y" ;
 $actionRows[9]["defaultPermissionTeacher"]="N" ;
 $actionRows[9]["defaultPermissionStudent"]="N" ;
